@@ -1,0 +1,6 @@
+@ContainerLockAPI_HostAddress = http://localhost:5189
+
+GET {{ContainerLockAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

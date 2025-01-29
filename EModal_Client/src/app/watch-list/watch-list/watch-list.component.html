@@ -1,0 +1,117 @@
+<div class="d-flex justify-content-center gap-3 mt-5">
+
+  <div class="d-flex gap-3">
+    <button (click)="openPopup()" class="btn btn-success btn-lg ms-3">Add Container</button>
+    <button (click)="goToCart()" class="btn btn-primary">Go to Cart</button>
+  </div>
+
+
+  <div class="ms-auto">
+    <button (click)="logout()" class="btn btn-danger btn-lg me-3">Logout</button>
+  </div>
+</div>
+
+
+<div *ngIf="isPopupVisible" class="modal fade show" tabindex="-1" style="display: block;"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Container</h5>
+        <button type="button" class="btn-close" (click)="closePopup()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="addToWatchlist()">
+
+          <div class="mb-3">
+            <label for="containerId" class="form-label">Container ID:</label>
+            <input type="text" id="containerId" [(ngModel)]="container.containerId" name="containerId"
+              class="form-control" placeholder="Enter Container ID" required>
+          </div>
+
+
+          <div *ngIf="isLoading" class="text-center text-muted">Loading...</div>
+
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+            {{ errorMessage }}
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 mt-3" [disabled]="isLoading">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- List of Containers -->
+<div *ngIf="containers.length > 0" class="container mt-5">
+  <h3>Container List</h3>
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>Container ID</th>
+        <th>Current Location</th>
+        <th>Date</th>
+        <th>Destination</th>
+        <th>Holds</th>
+        <th>Vessel Name</th>
+        <th>Vessel Code</th>
+        <th>Status</th>
+        <th>Trade Type</th>
+        <th>Size Type</th>
+        <th>Origin</th>
+        <th>Voyage</th>
+        <th>Demurrage Fees</th>
+        <th>Additional Fees</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let container of containers">
+        <td>{{ container.details?.containerId || 'N/A' }}</td>
+        <td>{{ container.details?.currentLocation || 'N/A' }}</td>
+        <td>{{ container.details?.date || 'N/A' }}</td>
+        <td>{{ container.details?.destination || 'N/A' }}</td>
+        <td>{{ container.details?.holds || 'N/A' }}</td>
+        <td>{{ container.details?.vesselName || 'N/A' }}</td>
+        <td>{{ container.details?.vesselCode || 'N/A' }}</td>
+        <td>{{ container.details?.status || 'N/A' }}</td>
+        <td>{{ container.details?.tradeType || 'N/A' }}</td>
+        <td>{{ container.details?.sizeType || 'N/A' }}</td>
+        <td>{{ container.details?.origin || 'N/A' }}</td>
+        <td>{{ container.details?.voyage || 'N/A' }}</td>
+        <td>{{ container.details?.demurrageFees || 'N/A' }}</td>
+        <td>{{ container.details?.additionalFees || 'N/A' }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm me-2 mb-1" (click)="removeFromWatchlist(container)">
+            Remove From Watchlist
+          </button>
+
+
+
+          <button class="btn btn-success btn-sm"
+            *ngIf="!container.isLocked && !cartContainerNumbers.has(container.containerNumber)"
+            (click)="addToCart(container)">
+            Add to Cart
+          </button>
+
+          <div class="tooltip-container"
+            *ngIf="container.isLocked && !cartContainerNumbers.has(container.containerNumber)">
+            <button class="btn btn-secondary btn-sm" disabled>
+               Add To Cart
+            </button>
+            <span class="tooltip-text">
+              This container was blocked due to payment initiation by another user. Try after 1 minute.
+            </span>
+          </div>
+
+          <button class="btn btn-warning btn-sm" *ngIf="cartContainerNumbers.has(container.containerNumber)"
+            (click)="removeFromCart(container)">
+            Remove from Cart
+          </button>
+
+      </tr>
+    </tbody>
+  </table>
+</div>
+

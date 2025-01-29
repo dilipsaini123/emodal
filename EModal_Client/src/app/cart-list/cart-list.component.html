@@ -1,0 +1,77 @@
+  <h3>Your Cart</h3>
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>
+          <!-- Select All Checkbox -->
+          <input type="checkbox" (change)="toggleSelectAll($event)" [checked]="isAllSelected()">
+        </th>
+        <th>Container ID</th>
+        <th>Current Location</th>
+        <th>Date</th>
+        <th>Destination</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let container of cart">
+        <td>
+          <!-- Individual Checkbox for selecting the container -->
+          <input type="checkbox" [(ngModel)]="container.selected" (change)="calculateTotalFees()">
+        </td>
+        <td>{{ container.details?.containerId || 'N/A' }}</td>
+        <td>{{ container.details?.currentLocation || 'N/A' }}</td>
+        <td>{{ container.details?.date || 'N/A' }}</td>
+        <td>{{ container.details?.destination || 'N/A' }}</td>
+        <td>
+          <!-- Button styled with Bootstrap classes -->
+          <button class="btn btn-danger btn-sm" (click)="removeFromCart(container.details?.containerId)">Remove from Cart</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+    <!-- Pay Button -->
+    <button class="pay-button m-2" (click)="paySelectedContainers()" [disabled]="!selectedContainers.length">Pay</button>
+
+    <!-- Back To Watch List Button -->
+    <button class="bg-danger" (click)="BackToWatchList()">Back To Watch List</button>
+
+
+  <!-- Payment Modal (Hidden by default) -->
+  <div class="payment-modal" *ngIf="showPaymentModal">
+      <div class="modal-content">
+        <h4>Payment Information</h4>
+    
+        <form (ngSubmit)="submitPayment()">
+          <div>
+            <label for="cardNumber">Card Number</label>
+            <input type="text" id="cardNumber" [(ngModel)]="paymentDetails.cardNumber" name="cardNumber" required>
+            <div *ngIf="paymentErrors.cardNumber" class="error-message">{{ paymentErrors.cardNumber }}</div>
+          </div>
+          <div>
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" [(ngModel)]="paymentDetails.cvv" name="cvv" required>
+            <div *ngIf="paymentErrors.cvv" class="error-message">{{ paymentErrors.cvv }}</div>
+          </div>
+          <div>
+            <label for="expiry">Expiry Date (MM/YY)</label>
+            <input type="text" id="expiry" [(ngModel)]="paymentDetails.expiry" name="expiry" required>
+            <div *ngIf="paymentErrors.expiry" class="error-message">{{ paymentErrors.expiry }}</div>
+          </div>
+          <div>
+            <p>Total Fee: {{ totalFees | number: '1.2-2' }}</p>
+          </div>
+          <button type="submit" class="btn btn-success me-3 ms-3">Pay</button>
+          <button type="button" class="btn btn-danger align-content-end" (click)="closePaymentModal()">Cancel</button>
+        </form>
+      </div>
+  </div>
+
+  <style>
+    .error-message {
+      color: red;
+      font-size: 0.9rem;
+    }
+  </style>
